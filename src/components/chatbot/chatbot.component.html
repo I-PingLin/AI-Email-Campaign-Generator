@@ -1,0 +1,63 @@
+
+<div class="flex flex-col h-[calc(100vh-200px)] max-w-3xl mx-auto bg-gray-800 rounded-xl shadow-lg mt-8 border border-gray-700">
+  <!-- Header -->
+  <div class="p-4 border-b border-gray-700">
+    <h2 class="text-xl font-bold text-center text-teal-400">Marketing Assistant Chat</h2>
+  </div>
+
+  <!-- Messages -->
+  <div #chatContainer class="flex-1 p-6 space-y-4 overflow-y-auto">
+    @for (message of messages(); track message.id) {
+      <div class="flex" [class.justify-end]="message.role === 'user'" [class.justify-start]="message.role === 'model'">
+        @if (message.role === 'model') {
+          <div class="flex items-start gap-2.5">
+              <div class="flex flex-col w-full max-w-lg leading-1.5 p-4 border-gray-600 bg-gray-700 rounded-e-xl rounded-es-xl">
+                  <p class="text-sm font-normal text-gray-300">{{ message.text }}</p>
+              </div>
+          </div>
+        } @else {
+          <div class="flex items-start gap-2.5 justify-end">
+              <div class="flex flex-col w-full max-w-lg leading-1.5 p-4 border-gray-600 bg-indigo-700 rounded-s-xl rounded-ee-xl">
+                  <p class="text-sm font-normal text-white">{{ message.text }}</p>
+              </div>
+          </div>
+        }
+      </div>
+    }
+    @if (isLoading() && messages()[messages().length - 1]?.text === '') {
+      <div class="flex justify-start">
+        <div class="flex items-start gap-2.5">
+          <div class="flex flex-col w-full max-w-lg leading-1.5 p-4 border-gray-600 bg-gray-700 rounded-e-xl rounded-es-xl">
+             <div class="flex items-center space-x-2">
+                <div class="w-2 h-2 rounded-full bg-gray-400 animate-pulse [animation-delay:-0.3s]"></div>
+                <div class="w-2 h-2 rounded-full bg-gray-400 animate-pulse [animation-delay:-0.15s]"></div>
+                <div class="w-2 h-2 rounded-full bg-gray-400 animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Input -->
+  <div class="p-4 border-t border-gray-700">
+    <form (submit)="sendMessage()">
+      <div class="flex items-center">
+        <input type="text"
+               class="flex-1 bg-gray-700 border border-gray-600 rounded-l-lg text-white p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+               placeholder="Ask a marketing question..."
+               [(ngModel)]="currentMessage"
+               [ngModelOptions]="{standalone: true}"
+               [disabled]="isLoading()"
+               autocomplete="off">
+        <button type="submit"
+                [disabled]="isLoading() || currentMessage().trim() === ''"
+                class="px-4 py-3 bg-indigo-600 text-white font-semibold rounded-r-lg hover:bg-indigo-700 disabled:bg-indigo-900 disabled:cursor-not-allowed transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+            <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
+          </svg>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

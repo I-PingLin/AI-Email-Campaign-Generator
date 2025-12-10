@@ -1,0 +1,106 @@
+
+<div class="p-4 sm:p-6 lg:p-8 w-full max-w-7xl mx-auto">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Left Column: Input Form -->
+    <div class="bg-gray-800 rounded-xl p-6 shadow-lg">
+      <h2 class="text-2xl font-bold text-indigo-400 mb-4">Create Your Campaign</h2>
+      <div class="space-y-6">
+        <div>
+          <label for="prompt" class="block text-sm font-medium text-gray-300 mb-2">Campaign Prompt</label>
+          <textarea id="prompt" name="prompt" rows="4"
+            class="w-full bg-gray-700 border border-gray-600 rounded-lg text-white p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+            placeholder="e.g., A launch campaign for a new sustainable coffee brand"
+            [(ngModel)]="prompt"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Image Aspect Ratio</label>
+          <fieldset class="mt-2">
+            <legend class="sr-only">Notification method</legend>
+            <div class="flex flex-wrap gap-4">
+              @for (ratio of aspectRatios; track ratio.value) {
+                <div class="flex items-center">
+                  <input [id]="ratio.value" name="aspect-ratio" type="radio" [value]="ratio.value" [(ngModel)]="aspectRatio"
+                    class="h-4 w-4 border-gray-600 bg-gray-700 text-indigo-600 focus:ring-indigo-600">
+                  <label [for]="ratio.value"
+                    class="ml-3 block text-sm font-medium leading-6 text-gray-300">{{ ratio.label }}</label>
+                </div>
+              }
+            </div>
+          </fieldset>
+        </div>
+
+        <div>
+          <button (click)="generateCampaign()" [disabled]="isLoading()"
+            class="w-full flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-900 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-indigo-500 transition-colors">
+            @if (isLoading()) {
+              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>Generating...</span>
+            } @else {
+              <span>Generate Campaign</span>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Campaign Preview -->
+    <div class="bg-gray-800 rounded-xl p-6 shadow-lg min-h-[300px] flex flex-col">
+      <h2 class="text-2xl font-bold text-teal-400 mb-4">Campaign Preview</h2>
+      
+      @if (error()) {
+        <div class="bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg relative" role="alert">
+          <strong class="font-bold">Error: </strong>
+          <span class="block sm:inline">{{ error() }}</span>
+        </div>
+      }
+
+      @if (isLoading() && !campaign()) {
+        <div class="flex-grow flex items-center justify-center">
+          <div class="text-center text-gray-400">
+            <svg class="animate-spin mx-auto h-12 w-12 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="mt-4 text-lg">Generating your campaign...</p>
+            <p class="text-sm">This may take a moment.</p>
+          </div>
+        </div>
+      } @else if (campaign()) {
+        <div class="bg-gray-900/50 p-4 sm:p-6 rounded-lg border border-gray-700 space-y-4">
+          <div>
+            <span class="font-semibold text-gray-400">Subject: </span>
+            <span class="text-white">{{ campaign()?.subject }}</span>
+          </div>
+          <div>
+            <span class="font-semibold text-gray-400">Preview: </span>
+            <span class="text-gray-300">{{ campaign()?.previewText }}</span>
+          </div>
+          <hr class="border-gray-700">
+          <div class="w-full bg-gray-700 rounded-md overflow-hidden aspect-[16/9]">
+            @if (generatedImage()) {
+              <img [src]="generatedImage()" alt="Generated campaign visual" class="w-full h-full object-cover">
+            } @else {
+              <div class="w-full h-full flex items-center justify-center">
+                <svg class="animate-spin h-8 w-8 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </div>
+            }
+          </div>
+          <div class="prose prose-invert max-w-none text-gray-300" [innerHTML]="campaign()?.body"></div>
+        </div>
+      } @else if (!isLoading() && !campaign()) {
+        <div class="flex-grow flex items-center justify-center">
+          <div class="text-center text-gray-500">
+            <p>Your generated campaign will appear here.</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

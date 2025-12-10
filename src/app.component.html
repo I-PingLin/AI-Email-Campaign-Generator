@@ -1,0 +1,45 @@
+
+<main class="min-h-screen">
+  <header class="bg-gray-800/50 backdrop-blur-sm sticky top-0 z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20 border-b border-gray-700">
+        <div class="flex items-center">
+           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-indigo-400 mr-3">
+              <path d="M21.721 12.752a9.711 9.711 0 0 0-9.71-9.711 9.711 9.711 0 0 0-9.71 9.711 9.711 9.711 0 0 0 9.71 9.711 9.711 9.711 0 0 0 9.71-9.711ZM12 20.25a8.25 8.25 0 1 1 0-16.5 8.25 8.25 0 0 1 0 16.5Z" />
+              <path fill-rule="evenodd" d="M12 9.75a.75.75 0 0 1 .75.75v3.19l2.47-2.47a.75.75 0 1 1 1.06 1.06l-3.75 3.75a.75.75 0 0 1-1.06 0l-3.75-3.75a.75.75 0 1 1 1.06-1.06l2.47 2.47V10.5a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd" />
+            </svg>
+          <h1 class="text-2xl font-bold text-white">AI Email Campaign Generator</h1>
+        </div>
+        <nav class="flex space-x-2">
+          <button (click)="selectTab('generator')"
+                  [class.bg-indigo-600]="activeTab() === 'generator'"
+                  [class.text-white]="activeTab() === 'generator'"
+                  [class.text-gray-300]="activeTab() !== 'generator'"
+                  [class.hover:bg-gray-700]="activeTab() !== 'generator'"
+                  class="px-4 py-2 text-sm font-medium rounded-md transition-colors">
+            Campaign Generator
+          </button>
+          <button (click)="selectTab('chatbot')"
+                  [class.bg-indigo-600]="activeTab() === 'chatbot'"
+                  [class.text-white]="activeTab() === 'chatbot'"
+                  [class.text-gray-300]="activeTab() !== 'chatbot'"
+                  [class.hover:bg-gray-700]="activeTab() !== 'chatbot'"
+                  class="px-4 py-2 text-sm font-medium rounded-md transition-colors">
+            Chatbot
+          </button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <div class="content">
+    @switch (activeTab()) {
+      @case ('generator') {
+        <app-campaign-generator></app-campaign-generator>
+      }
+      @case ('chatbot') {
+        <app-chatbot></app-chatbot>
+      }
+    }
+  </div>
+</main>
